@@ -14,3 +14,5 @@ export const viewIdeaRouteParams = getRouteParams({
 })
 export type TViewIdeaRouteParams = typeof viewIdeaRouteParams
 export const getViewIdeaRoute = (params: TViewIdeaRouteParams) => `/idea/${params.ideaNick}`
+
+export const getNewIdeaRoute = () => '/ideas/new'

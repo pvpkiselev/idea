@@ -1,44 +1,32 @@
 import { initTRPC } from '@trpc/server'
+import _ from 'lodash'
+import { z } from 'zod'
 
-const ideas = [
-  {
-    nick: 'cool-idea-nick-1',
-    name: 'Idea 1',
-    description: 'Idea 1 description',
-  },
-  {
-    nick: 'cool-idea-nick-2',
-    name: 'Idea 2',
-    description: 'Idea 2 description',
-  },
-  {
-    nick: 'cool-idea-nick-3',
-    name: 'Idea 3',
-    description: 'Idea 3 description',
-  },
-  {
-    nick: 'cool-idea-nick-4',
-    name: 'Idea 4',
-    description: 'Idea 4 description',
-  },
-  {
-    nick: 'cool-idea-nick-5',
-    name: 'Idea 5',
-    description: 'Idea 5 description',
-  },
-]
+const ideas = _.times(100, (i) => ({
+  nick: `cool-idea-nick-${i}`,
+  name: `Idea ${i}`,
+  description: `Idea ${i} description`,
+  text: _.times(100, (j) => `Text paragraph ${j} of idea ${i}`),
+}))
 
 const trpc = initTRPC.create()
 
-const x: string = 'test'
-if (Math.random() + 1) {
-  console.info(x)
-}
-
 export const trpcRouter = trpc.router({
   getIdeas: trpc.procedure.query(() => {
-    return { ideas }
+    return { ideas: ideas.map((idea) => _.pick(idea, ['nick', 'name', 'description'])) }
   }),
+
+  getIdea: trpc.procedure
+    .input(
+      z.object({
+        ideaNick: z.string(),
+      })
+    )
+    .query(({ input }) => {
+      const idea = ideas.find((idea) => idea.nick === input.ideaNick)
+
+      return { idea: idea || null }
+    }),
 })
 
 export type TrpcRouter = typeof trpcRouter

@@ -17,8 +17,7 @@ rules:
         caseInsensitive: false
         orderImportKind: asc
   '@typescript-eslint/consistent-type-definitions':
-    - error
-    - type
+    - off
   '@typescript-eslint/strict-boolean-expressions': off
   '@typescript-eslint/prefer-nullish-coalescing': off
   '@typescript-eslint/explicit-function-return-type': off
