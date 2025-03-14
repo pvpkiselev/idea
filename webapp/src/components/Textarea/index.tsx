@@ -1,4 +1,6 @@
+import cn from 'classnames'
 import { type FormikProps } from 'formik'
+import styles from './index.module.scss'
 
 interface TextareaProps {
   name: string
@@ -16,13 +18,17 @@ export const Textarea = (props: TextareaProps) => {
   const value = values[name]
   const error = errors[name] as string | undefined
   const isTouched = touched[name]
+  const isDisabled = isSubmitting
+  const isInvalid = !!isTouched && !!error
 
   return (
-    <div style={{ marginBottom: 10 }}>
-      <label htmlFor={name}>{label}</label>
-      <br />
+    <div className={cn({ [styles.field]: true, [styles.disabled]: isDisabled })}>
+      <label className={styles.label} htmlFor={name}>
+        {label}
+      </label>
 
       <textarea
+        className={cn({ [styles.input]: true, [styles.invalid]: isInvalid })}
         onChange={(e) => {
           void setFieldValue(name, e.target.value)
         }}
@@ -34,7 +40,8 @@ export const Textarea = (props: TextareaProps) => {
         id={name}
         disabled={isSubmitting}
       />
-      {!!isTouched && !!error && <div style={{ color: 'red' }}>{error}</div>}
+
+      {isInvalid && <div className={styles.error}>{error}</div>}
     </div>
   )
 }

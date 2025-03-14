@@ -1,9 +1,12 @@
+import cn from 'classnames'
 import { type FormikProps } from 'formik'
+import styles from './index.module.scss'
 
 interface InputProps {
   name: string
   label: string
   formik: FormikProps<any>
+  maxWidth?: number
 }
 
 export const Input = (props: InputProps) => {
@@ -11,18 +14,24 @@ export const Input = (props: InputProps) => {
     name,
     label,
     formik: { values, errors, setFieldValue, setFieldTouched, touched, isSubmitting },
+    maxWidth,
   } = props
 
   const value = values[name]
   const error = errors[name] as string | undefined
   const isTouched = touched[name]
+  const isDisabled = isSubmitting
+  const isInvalid = !!isTouched && !!error
 
   return (
-    <div style={{ marginBottom: 10 }}>
-      <label htmlFor={name}>{label}</label>
-      <br />
+    <div className={cn({ [styles.field]: true, [styles.disabled]: isDisabled })}>
+      <label className={styles.label} htmlFor={name}>
+        {label}
+      </label>
 
       <input
+        className={cn({ [styles.input]: true, [styles.invalid]: isInvalid })}
+        style={{ maxWidth }}
         type="text"
         onChange={(e) => {
           void setFieldValue(name, e.target.value)
@@ -35,7 +44,8 @@ export const Input = (props: InputProps) => {
         id={name}
         disabled={isSubmitting}
       />
-      {!!isTouched && !!error && <div style={{ color: 'red' }}>{error}</div>}
+
+      {isInvalid && <div className={styles.error}>{error}</div>}
     </div>
   )
 }
