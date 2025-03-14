@@ -25,13 +25,7 @@ export const ViewIdeaPage = () => {
 
   return (
     <Segment title={data.idea.name} description={data.idea.description}>
-      <ul>
-        {data.idea.text.map((paragraph, i) => (
-          <li className={styles.text} key={i}>
-            <p>{paragraph}</p>
-          </li>
-        ))}
-      </ul>
+      <div className={styles.text} dangerouslySetInnerHTML={{ __html: data.idea.text }} />
     </Segment>
   )
 }

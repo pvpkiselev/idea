@@ -4,8 +4,11 @@ import { z } from 'zod'
 import { Input } from '../../components/Input'
 import { Segment } from '../../components/Segment'
 import { Textarea } from '../../components/Textarea'
+import { trpc } from '../../lib/trpc'
 
 export const NewIdeaPage = () => {
+  const createIdea = trpc.createIdea.useMutation()
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -27,8 +30,8 @@ export const NewIdeaPage = () => {
           .max(1000, 'Text should not exceed 1000 characters'),
       })
     ),
-    onSubmit: (values) => {
-      console.info('submit', values)
+    onSubmit: async (values) => {
+      await createIdea.mutateAsync(values)
     },
   })
 
