@@ -1,12 +1,16 @@
+import { zCreateIdeaTrpcInput } from '@ideanick/backend/src/router/createIdea/input'
 import { useFormik } from 'formik'
 import { withZodSchema } from 'formik-validator-zod'
-import { z } from 'zod'
+import { useState } from 'react'
 import { Input } from '../../components/Input'
 import { Segment } from '../../components/Segment'
 import { Textarea } from '../../components/Textarea'
 import { trpc } from '../../lib/trpc'
 
 export const NewIdeaPage = () => {
+  const [successMessageVisible, setSuccessMessageVisible] = useState(false)
+  const [submittingError, setSubmittingError] = useState<string | null>(null)
+
   const createIdea = trpc.createIdea.useMutation()
 
   const formik = useFormik({
@@ -16,22 +20,26 @@ export const NewIdeaPage = () => {
       description: '',
       text: '',
     },
-    validate: withZodSchema(
-      z.object({
-        name: z.string().min(1),
-        nick: z
-          .string()
-          .min(1)
-          .regex(/^[a-z0-9]+$/, 'Nick may contain only lowercase letters, numbers and dashes'),
-        description: z.string().min(1),
-        text: z
-          .string()
-          .min(10, 'Text should not be less than 10 characters')
-          .max(1000, 'Text should not exceed 1000 characters'),
-      })
-    ),
+    validate: withZodSchema(zCreateIdeaTrpcInput),
     onSubmit: async (values) => {
-      await createIdea.mutateAsync(values)
+      const visibleTime = 3000
+
+      try {
+        await createIdea.mutateAsync(values)
+
+        formik.resetForm()
+        setSuccessMessageVisible(true)
+
+        setTimeout(() => {
+          setSuccessMessageVisible(false)
+        }, visibleTime)
+      } catch (error: any) {
+        setSubmittingError(error.message)
+
+        setTimeout(() => {
+          setSubmittingError(null)
+        }, visibleTime)
+      }
     },
   })
 
@@ -50,7 +58,13 @@ export const NewIdeaPage = () => {
 
         {!formik.isValid && !!formik.submitCount && <div style={{ color: 'red' }}>Form is invalid</div>}
 
-        <button type="submit">Create Idea</button>
+        {!!submittingError && <div style={{ color: 'red' }}>{submittingError}</div>}
+
+        {successMessageVisible && <div style={{ color: 'green' }}>Idea created successfully</div>}
+
+        <button type="submit" disabled={formik.isSubmitting}>
+          {formik.isSubmitting ? 'Submitting...' : 'Create Idea'}
+        </button>
       </form>
     </Segment>
   )

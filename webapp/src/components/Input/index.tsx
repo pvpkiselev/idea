@@ -10,7 +10,7 @@ export const Input = (props: InputProps) => {
   const {
     name,
     label,
-    formik: { values, errors, setFieldValue, setFieldTouched, touched },
+    formik: { values, errors, setFieldValue, setFieldTouched, touched, isSubmitting },
   } = props
 
   const value = values[name]
@@ -33,6 +33,7 @@ export const Input = (props: InputProps) => {
         value={value}
         name={name}
         id={name}
+        disabled={isSubmitting}
       />
       {!!isTouched && !!error && <div style={{ color: 'red' }}>{error}</div>}
     </div>
