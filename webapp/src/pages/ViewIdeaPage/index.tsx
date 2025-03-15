@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { useParams } from 'react-router'
 import { Segment } from '../../components/Segment'
 import type { TViewIdeaRouteParams } from '../../lib/routes'
@@ -25,6 +26,7 @@ export const ViewIdeaPage = () => {
 
   return (
     <Segment title={data.idea.name} description={data.idea.description}>
+      <div className={styles.createdAt}>Created At: {format(data.idea.createdAt, 'yyyy-MM-dd')}</div>
       <div className={styles.text} dangerouslySetInnerHTML={{ __html: data.idea.text }} />
     </Segment>
   )
