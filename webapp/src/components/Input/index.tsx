@@ -2,7 +2,7 @@ import cn from 'classnames'
 import { type FormikProps } from 'formik'
 import styles from './index.module.scss'
 
-interface InputProps {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string
   label: string
   formik: FormikProps<any>
