@@ -2,6 +2,7 @@ import { format } from 'date-fns'
 import { useParams } from 'react-router'
 import { LinkButton } from '../../components/Button'
 import { Segment } from '../../components/Segment'
+import { useMe } from '../../lib/ctx'
 import { getEditIdeaRoute, type TViewIdeaRouteParams } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 import styles from './index.module.scss'
@@ -11,9 +12,9 @@ export const ViewIdeaPage = () => {
 
   const getIdeaResult = trpc.getIdea.useQuery({ ideaNick })
 
-  const getMeResult = trpc.getMe.useQuery()
+  const me = useMe()
 
-  if (getIdeaResult.isLoading || getIdeaResult.isFetching || getMeResult.isLoading || getMeResult.isFetching) {
+  if (getIdeaResult.isLoading || getIdeaResult.isFetching) {
     return <div>Loading...</div>
   }
 
@@ -21,16 +22,11 @@ export const ViewIdeaPage = () => {
     return <div>Error: {getIdeaResult.error.message}</div>
   }
 
-  if (getMeResult.isError) {
-    return <div>Error: {getMeResult.error.message}</div>
-  }
-
   if (!getIdeaResult.data.idea) {
     return <div>Idea Not found</div>
   }
 
   const idea = getIdeaResult.data.idea
-  const me = getMeResult.data.me
 
   return (
     <Segment title={idea.name} description={idea.description}>

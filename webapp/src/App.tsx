@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router'
 import { Layout } from './components/Layout'
+import { AppReactContextProvider } from './lib/ctx'
 import * as routes from './lib/routes'
 import { TrpcProvider } from './lib/trpc'
 import { AllIdeasPage } from './pages/AllIdeasPage'
@@ -14,24 +15,27 @@ import './styles/global.scss'
 const App = () => {
   return (
     <TrpcProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path={routes.getSignOutRoute()} element={<SignOutPage />} />
-          <Route element={<Layout />}>
-            <Route path={routes.getAllIdeasRoute()} element={<AllIdeasPage />} />
+      <AppReactContextProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path={routes.getSignOutRoute()} element={<SignOutPage />} />
 
-            <Route path={routes.getViewIdeaRoute(routes.viewIdeaRouteParams)} element={<ViewIdeaPage />} />
+            <Route element={<Layout />}>
+              <Route path={routes.getAllIdeasRoute()} element={<AllIdeasPage />} />
 
-            <Route path={routes.getNewIdeaRoute()} element={<NewIdeaPage />} />
+              <Route path={routes.getViewIdeaRoute(routes.viewIdeaRouteParams)} element={<ViewIdeaPage />} />
 
-            <Route path={routes.getEditIdeaRoute(routes.editIdeaRouteParams)} element={<EditIdeaPage />} />
+              <Route path={routes.getNewIdeaRoute()} element={<NewIdeaPage />} />
 
-            <Route path={routes.getSignUpRoute()} element={<SignUpPage />} />
+              <Route path={routes.getEditIdeaRoute(routes.editIdeaRouteParams)} element={<EditIdeaPage />} />
 
-            <Route path={routes.getSignInRoute()} element={<SignInPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+              <Route path={routes.getSignUpRoute()} element={<SignUpPage />} />
+
+              <Route path={routes.getSignInRoute()} element={<SignInPage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </AppReactContextProvider>
     </TrpcProvider>
   )
 }

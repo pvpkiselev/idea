@@ -8,6 +8,7 @@ import { FormItems } from '../../components/FormItems'
 import { Input } from '../../components/Input'
 import { Segment } from '../../components/Segment'
 import { Textarea } from '../../components/Textarea'
+import { useMe } from '../../lib/ctx'
 import { useForm } from '../../lib/form'
 import { getViewIdeaRoute, type TEditIdeaRouteParams } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
@@ -56,9 +57,9 @@ export const EditIdeaPage = () => {
 
   const getIdeaResult = trpc.getIdea.useQuery({ ideaNick })
 
-  const getMeResult = trpc.getMe.useQuery()
+  const me = useMe()
 
-  if (getIdeaResult.isLoading || getIdeaResult.isFetching || getMeResult.isLoading || getMeResult.isFetching) {
+  if (getIdeaResult.isLoading || getIdeaResult.isFetching) {
     return <div>Loading...</div>
   }
 
@@ -66,16 +67,11 @@ export const EditIdeaPage = () => {
     return <div>Error: {getIdeaResult.error.message}</div>
   }
 
-  if (getMeResult.isError) {
-    return <div>Error: {getMeResult.error.message}</div>
-  }
-
   if (!getIdeaResult.data.idea) {
     return <div>Idea Not found</div>
   }
 
   const idea = getIdeaResult.data.idea
-  const me = getMeResult.data.me
 
   if (!me) {
     return <div>Only for authorized</div>
