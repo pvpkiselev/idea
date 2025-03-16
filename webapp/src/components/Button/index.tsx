@@ -1,4 +1,5 @@
 import cn from 'classnames'
+import { Link } from 'react-router'
 import styles from './index.module.scss'
 
 interface ButtonProps {
@@ -6,6 +7,12 @@ interface ButtonProps {
   color?: 'green' | 'red'
   type?: 'submit' | 'button'
   isLoading?: boolean
+}
+
+interface LinkButtonProps {
+  children: React.ReactNode
+  to: string
+  color?: 'green' | 'red'
 }
 
 export const Button = (props: ButtonProps) => {
@@ -19,5 +26,15 @@ export const Button = (props: ButtonProps) => {
     >
       {isLoading ? 'Submitting...' : children}
     </button>
+  )
+}
+
+export const LinkButton = (props: LinkButtonProps) => {
+  const { children, color = 'green', to } = props
+
+  return (
+    <Link to={to} className={cn({ [styles.button]: true, [styles[`color-${color}`]]: true })}>
+      {children}
+    </Link>
   )
 }
