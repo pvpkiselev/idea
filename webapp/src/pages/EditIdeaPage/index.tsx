@@ -1,4 +1,3 @@
-import type { TrpcRouterOutput } from '@ideanick/backend/src/router'
 import { zUpdateIdeaTrpcInput } from '@ideanick/backend/src/router/updateIdea/input'
 import { pick } from 'lodash'
 import { useNavigate, useParams } from 'react-router'
@@ -8,12 +7,24 @@ import { FormItems } from '../../components/FormItems'
 import { Input } from '../../components/Input'
 import { Segment } from '../../components/Segment'
 import { Textarea } from '../../components/Textarea'
-import { useMe } from '../../lib/ctx'
 import { useForm } from '../../lib/form'
+import { withPageWrapper } from '../../lib/pageWrapper'
 import { getViewIdeaRoute, type TEditIdeaRouteParams } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
-const EditIdeaComponent = ({ idea }: { idea: NonNullable<TrpcRouterOutput['getIdea']['idea']> }) => {
+export const EditIdeaPage = withPageWrapper({
+  authorizedOnly: true,
+  useQuery: () => {
+    const { ideaNick } = useParams() as TEditIdeaRouteParams
+    return trpc.getIdea.useQuery({ ideaNick })
+  },
+  setProps: ({ queryResult, ctx, checkExists, checkAccess }) => {
+    const idea = checkExists(queryResult.data?.idea, 'Idea not found')
+    checkAccess(ctx.me?.id === idea.authorId, 'An idea can only be edited by the author')
+
+    return { idea }
+  },
+})(({ idea }) => {
   const navigate = useNavigate()
 
   const updateIdea = trpc.updateIdea.useMutation()
@@ -50,36 +61,4 @@ const EditIdeaComponent = ({ idea }: { idea: NonNullable<TrpcRouterOutput['getId
       </form>
     </Segment>
   )
-}
-
-export const EditIdeaPage = () => {
-  const { ideaNick } = useParams() as TEditIdeaRouteParams
-
-  const getIdeaResult = trpc.getIdea.useQuery({ ideaNick })
-
-  const me = useMe()
-
-  if (getIdeaResult.isLoading || getIdeaResult.isFetching) {
-    return <div>Loading...</div>
-  }
-
-  if (getIdeaResult.isError) {
-    return <div>Error: {getIdeaResult.error.message}</div>
-  }
-
-  if (!getIdeaResult.data.idea) {
-    return <div>Idea Not found</div>
-  }
-
-  const idea = getIdeaResult.data.idea
-
-  if (!me) {
-    return <div>Only for authorized</div>
-  }
-
-  if (me.id !== idea.authorId) {
-    return <div>An idea can only be edited by its author</div>
-  }
-
-  return <EditIdeaComponent idea={idea} />
-}
+})

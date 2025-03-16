@@ -2,32 +2,23 @@ import { format } from 'date-fns'
 import { useParams } from 'react-router'
 import { LinkButton } from '../../components/Button'
 import { Segment } from '../../components/Segment'
-import { useMe } from '../../lib/ctx'
-import { getEditIdeaRoute, type TViewIdeaRouteParams } from '../../lib/routes'
+import { withPageWrapper } from '../../lib/pageWrapper'
+import { type TEditIdeaRouteParams, getEditIdeaRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 import styles from './index.module.scss'
 
-export const ViewIdeaPage = () => {
-  const { ideaNick } = useParams() as TViewIdeaRouteParams
+export const ViewIdeaPage = withPageWrapper({
+  authorizedOnly: true,
+  useQuery: () => {
+    const { ideaNick } = useParams() as TEditIdeaRouteParams
+    return trpc.getIdea.useQuery({ ideaNick })
+  },
+  setProps: ({ queryResult, ctx, checkExists }) => {
+    const idea = checkExists(queryResult.data?.idea, 'Idea not found')
 
-  const getIdeaResult = trpc.getIdea.useQuery({ ideaNick })
-
-  const me = useMe()
-
-  if (getIdeaResult.isLoading || getIdeaResult.isFetching) {
-    return <div>Loading...</div>
-  }
-
-  if (getIdeaResult.isError) {
-    return <div>Error: {getIdeaResult.error.message}</div>
-  }
-
-  if (!getIdeaResult.data.idea) {
-    return <div>Idea Not found</div>
-  }
-
-  const idea = getIdeaResult.data.idea
-
+    return { idea, me: ctx.me }
+  },
+})(({ idea, me }) => {
   return (
     <Segment title={idea.name} description={idea.description}>
       <div className={styles.createdAt}>Created At: {format(idea.createdAt, 'yyyy-MM-dd')}</div>
@@ -41,4 +32,4 @@ export const ViewIdeaPage = () => {
       )}
     </Segment>
   )
-}
+})
