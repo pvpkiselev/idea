@@ -1,9 +1,6 @@
 import type { TrpcRouterOutput } from '@ideanick/backend/src/router'
 import { zUpdateIdeaTrpcInput } from '@ideanick/backend/src/router/updateIdea/input'
-import { useFormik } from 'formik'
-import { withZodSchema } from 'formik-validator-zod'
 import { pick } from 'lodash'
-import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { Alert } from '../../components/Alert'
 import { Button } from '../../components/Button'
@@ -11,30 +8,24 @@ import { FormItems } from '../../components/FormItems'
 import { Input } from '../../components/Input'
 import { Segment } from '../../components/Segment'
 import { Textarea } from '../../components/Textarea'
+import { useForm } from '../../lib/form'
 import { getViewIdeaRoute, type TEditIdeaRouteParams } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
 const EditIdeaComponent = ({ idea }: { idea: NonNullable<TrpcRouterOutput['getIdea']['idea']> }) => {
   const navigate = useNavigate()
 
-  const [submittingError, setSubmittingError] = useState<string | null>(null)
-
   const updateIdea = trpc.updateIdea.useMutation()
 
-  const formik = useFormik({
+  const { formik, buttonProps, alertProps } = useForm({
     initialValues: pick(idea, ['name', 'nick', 'description', 'text']),
-    validate: withZodSchema(zUpdateIdeaTrpcInput.omit({ ideaId: true })),
-    onSubmit: async (values) => {
-      try {
-        setSubmittingError(null)
-
-        await updateIdea.mutateAsync({ ideaId: idea.id, ...values })
-
-        await navigate(getViewIdeaRoute({ ideaNick: values.nick }))
-      } catch (error: any) {
-        setSubmittingError(error.message)
-      }
+    validationSchema: zUpdateIdeaTrpcInput.omit({ ideaId: true }),
+    onFormSubmit: async (values) => {
+      await updateIdea.mutateAsync({ ideaId: idea.id, ...values })
+      await navigate(getViewIdeaRoute({ ideaNick: values.nick }))
     },
+    resetOnSuccess: false,
+    showValidationAlert: true,
   })
 
   return (
@@ -51,13 +42,9 @@ const EditIdeaComponent = ({ idea }: { idea: NonNullable<TrpcRouterOutput['getId
           <Input name="description" label="Description" formik={formik} maxWidth={500} />
           <Textarea name="text" label="Text" formik={formik} />
 
-          {!formik.isValid && !!formik.submitCount && <div style={{ color: 'red' }}>Form is invalid</div>}
+          <Alert {...alertProps} />
 
-          {!!submittingError && <Alert color="red"> {submittingError}</Alert>}
-
-          <Button type="submit" isLoading={formik.isSubmitting}>
-            Update Idea
-          </Button>
+          <Button {...buttonProps}>Update Idea</Button>
         </FormItems>
       </form>
     </Segment>

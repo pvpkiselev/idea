@@ -2,14 +2,14 @@ import cn from 'classnames'
 import { Link } from 'react-router'
 import styles from './index.module.scss'
 
-interface ButtonProps {
+export interface ButtonProps {
   children: React.ReactNode
   color?: 'green' | 'red'
   type?: 'submit' | 'button'
   isLoading?: boolean
 }
 
-interface LinkButtonProps {
+export interface LinkButtonProps {
   children: React.ReactNode
   to: string
   color?: 'green' | 'red'
