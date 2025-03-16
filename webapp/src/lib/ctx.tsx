@@ -2,32 +2,32 @@ import type { TrpcRouterOutput } from '@ideanick/backend/src/router'
 import { createContext, useContext } from 'react'
 import { trpc } from './trpc'
 
-export type TAppReactContext = {
+export type AppReactContext = {
   me: TrpcRouterOutput['getMe']['me']
 }
 
-export type TAppReactContextProviderProps = {
+export type AppReactContextProviderProps = {
   children: React.ReactNode
 }
 
-const AppReactContext = createContext<TAppReactContext>({
+const AppContext = createContext<AppReactContext>({
   me: null,
 })
 
-export const AppReactContextProvider = (props: TAppReactContextProviderProps) => {
+export const AppReactContextProvider = (props: AppReactContextProviderProps) => {
   const { children } = props
 
   const { data, error, isLoading, isFetching, isError } = trpc.getMe.useQuery()
 
   return (
-    <AppReactContext.Provider value={{ me: data?.me || null }}>
+    <AppContext.Provider value={{ me: data?.me || null }}>
       {isLoading || isFetching ? <div>Loading…</div> : isError ? <div>Error: {error.message}</div> : children}
-    </AppReactContext.Provider>
+    </AppContext.Provider>
   )
 }
 
 export const useAppReactContext = () => {
-  return useContext(AppReactContext)
+  return useContext(AppContext)
 }
 
 export const useMe = () => {

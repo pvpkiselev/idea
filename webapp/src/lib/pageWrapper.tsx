@@ -2,7 +2,8 @@ import { type UseTRPCQueryResult } from '@trpc/react-query/shared'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { ErrorPageComponent } from '../components/ErrorPageComponent'
-import { useAppReactContext, type TAppReactContext } from './ctx'
+import { NotFoundPage } from '../pages/other/NotFoundPage'
+import { type AppReactContext, useAppReactContext } from './ctx'
 import { getAllIdeasRoute } from './routes'
 
 class CheckExistsError extends Error {}
@@ -24,7 +25,7 @@ type Props = Record<string, any>
 type QueryResult = UseTRPCQueryResult<any, any>
 type QuerySuccessResult<TQueryResult extends QueryResult> = UseTRPCQueryResult<NonNullable<TQueryResult['data']>, null>
 type HelperProps<TQueryResult extends QueryResult | undefined> = {
-  ctx: TAppReactContext
+  ctx: AppReactContext
   queryResult: TQueryResult extends QueryResult ? QuerySuccessResult<TQueryResult> : undefined
 }
 type SetPropsProps<TQueryResult extends QueryResult | undefined> = HelperProps<TQueryResult> & {
@@ -60,8 +61,8 @@ const PageWrapper = <TProps extends Props = {}, TQueryResult extends QueryResult
   checkAccessTitle = 'Access Denied',
   checkAccessMessage = 'You do not have access to this page',
   checkExists,
-  checkExistsTitle = 'Page Not Found',
-  checkExistsMessage = 'The page you are looking for does not exist',
+  checkExistsTitle,
+  checkExistsMessage,
   useQuery,
   setProps,
   Page,
@@ -95,14 +96,14 @@ const PageWrapper = <TProps extends Props = {}, TQueryResult extends QueryResult
   if (checkAccess) {
     const accessDenied = !checkAccess(helperProps)
     if (accessDenied) {
-      return <ErrorPageComponent title={checkAccessTitle} message={checkAccessMessage} />
+      return <NotFoundPage title={checkAccessTitle} message={checkAccessMessage} />
     }
   }
 
   if (checkExists) {
     const accessDenied = !checkExists(helperProps)
     if (accessDenied) {
-      return <ErrorPageComponent title={checkExistsTitle} message={checkExistsMessage} />
+      return <NotFoundPage title={checkExistsTitle} message={checkExistsMessage} />
     }
   }
 

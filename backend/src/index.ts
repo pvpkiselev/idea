@@ -14,9 +14,6 @@ void (async () => {
 
     const expressApp = express()
     expressApp.use(cors())
-    expressApp.get('/ping', (req, res) => {
-      res.send('pong')
-    })
 
     applyPassportToExpressApp(expressApp, ctx)
 
