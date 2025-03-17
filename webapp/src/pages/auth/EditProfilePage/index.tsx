@@ -1,4 +1,3 @@
-import type { TrpcRouterOutput } from '@ideanick/backend/src/router'
 import { zUpdatePasswordTrpcInput } from '@ideanick/backend/src/router/auth/updatePassword/input'
 import { zUpdateProfileTrpcInput } from '@ideanick/backend/src/router/auth/updateProfile/input'
 import { z } from 'zod'
@@ -10,9 +9,10 @@ import { Segment } from '../../../components/Segment'
 import { useForm } from '../../../lib/form'
 import { withPageWrapper } from '../../../lib/pageWrapper'
 import { trpc } from '../../../lib/trpc'
+import { type TrpcRouterOutputMaybeMe } from '../../../models/types'
 
 interface GeneralProps {
-  me: NonNullable<TrpcRouterOutput['getMe']['me']>
+  me: TrpcRouterOutputMaybeMe
 }
 
 const General = (props: GeneralProps) => {
