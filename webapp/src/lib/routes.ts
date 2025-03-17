@@ -23,6 +23,8 @@ export const getEditIdeaRoute = (params: EditIdeaRouteParams) => `/ideas/${param
 
 export const getNewIdeaRoute = () => '/ideas/new'
 
+export const getEditProfileRoute = () => '/edit-profile'
+
 export const getSignUpRoute = () => '/sign-up'
 
 export const getSignInRoute = () => '/sign-in'

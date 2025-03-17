@@ -3,6 +3,7 @@ import { Layout } from './components/Layout'
 import { AppReactContextProvider } from './lib/ctx'
 import * as routes from './lib/routes'
 import { TrpcProvider } from './lib/trpc'
+import { EditProfilePage } from './pages/auth/EditProfilePage'
 import { SignInPage } from './pages/auth/SignInPage'
 import { SignOutPage } from './pages/auth/SignOutPage'
 import { SignUpPage } from './pages/auth/SignUpPage'
@@ -27,6 +28,8 @@ const App = () => {
               <Route path={routes.getViewIdeaRoute(routes.viewIdeaRouteParams)} element={<ViewIdeaPage />} />
 
               <Route path={routes.getNewIdeaRoute()} element={<NewIdeaPage />} />
+
+              <Route path={routes.getEditProfileRoute()} element={<EditProfilePage />} />
 
               <Route path={routes.getEditIdeaRoute(routes.editIdeaRouteParams)} element={<EditIdeaPage />} />
 
