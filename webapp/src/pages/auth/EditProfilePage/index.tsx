@@ -88,7 +88,9 @@ const Password = () => {
         <Input label="Old password" name="oldPassword" type="password" formik={formik} />
         <Input label="New password" name="newPassword" type="password" formik={formik} />
         <Input label="New password again" name="newPasswordAgain" type="password" formik={formik} />
+
         <Alert {...alertProps} />
+
         <Button {...buttonProps}>Update Password</Button>
       </FormItems>
     </form>

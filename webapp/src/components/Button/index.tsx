@@ -5,7 +5,7 @@ import styles from './index.module.scss'
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode
   color?: 'green' | 'red'
-  isLoading?: boolean
+  loading?: boolean
 }
 
 export interface LinkButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -15,14 +15,19 @@ export interface LinkButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
 }
 
 export const Button = (props: ButtonProps) => {
-  const { children, color = 'green', isLoading } = props
+  const { children, color = 'green', loading = false } = props
 
   return (
     <button
-      className={cn({ [styles.button]: true, [styles[`color-${color}`]]: true, [styles.disabled]: isLoading })}
-      disabled={isLoading}
+      className={cn({
+        [styles.button]: true,
+        [styles[`color-${color}`]]: true,
+        [styles.disabled]: loading,
+        [styles.loading]: loading,
+      })}
+      disabled={loading}
     >
-      {isLoading ? 'Submitting...' : children}
+      <span className={styles.text}>{children}</span>
     </button>
   )
 }

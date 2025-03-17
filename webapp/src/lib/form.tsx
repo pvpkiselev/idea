@@ -84,7 +84,7 @@ export const useForm = <TZodSchema extends z.ZodTypeAny>({
 
   const buttonProps = useMemo<Omit<ButtonProps, 'children'>>(() => {
     return {
-      isLoading: formik.isSubmitting,
+      loading: formik.isSubmitting,
     }
   }, [formik.isSubmitting])
 
