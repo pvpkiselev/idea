@@ -2,7 +2,7 @@ import cn from 'classnames'
 import styles from './index.module.scss'
 
 export interface AlertProps {
-  color: 'red' | 'green'
+  color: 'red' | 'green' | 'brown'
   hidden?: boolean
   children: React.ReactNode
 }

@@ -6,7 +6,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string
   label: string
   formik: FormikProps<any>
-  maxWidth?: number
+  maxWidth?: number | string
 }
 
 export const Input = (props: InputProps) => {
