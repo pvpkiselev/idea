@@ -1,3 +1,4 @@
+import { createRef } from 'react'
 import { Link, Outlet } from 'react-router'
 import { useMe } from '../../lib/ctx'
 import {
@@ -9,6 +10,8 @@ import {
   getSignUpRoute,
 } from '../../lib/routes'
 import styles from './index.module.scss'
+
+export const layoutContentElRef = createRef<HTMLDivElement>()
 
 export const Layout = () => {
   const me = useMe()
@@ -63,7 +66,7 @@ export const Layout = () => {
         </ul>
       </div>
 
-      <div className={styles.content}>
+      <div className={styles.content} ref={layoutContentElRef}>
         <Outlet />
       </div>
     </div>

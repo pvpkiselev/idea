@@ -10,13 +10,15 @@
     padding: 20px;
     border: 1px solid $black;
     border-radius: 10px;
+    overflow-wrap: break-word;
 
-    & + .idea {
+    &+.idea {
       margin-top: 20px;
     }
 
     .ideaLink {
       @include link;
+
     }
   }
 
