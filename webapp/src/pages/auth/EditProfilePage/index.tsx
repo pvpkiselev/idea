@@ -1,4 +1,7 @@
+import type { TrpcRouterOutput } from '@ideanick/backend/src/router'
+import { zUpdatePasswordTrpcInput } from '@ideanick/backend/src/router/auth/updatePassword/input'
 import { zUpdateProfileTrpcInput } from '@ideanick/backend/src/router/auth/updateProfile/input'
+import { z } from 'zod'
 import { Alert } from '../../../components/Alert'
 import { Button } from '../../../components/Button'
 import { FormItems } from '../../../components/FormItems'
@@ -8,13 +11,13 @@ import { useForm } from '../../../lib/form'
 import { withPageWrapper } from '../../../lib/pageWrapper'
 import { trpc } from '../../../lib/trpc'
 
-export const EditProfilePage = withPageWrapper({
-  authorizedOnly: true,
-  setProps: ({ getAuthorizedMe }) => {
-    const me = getAuthorizedMe()
-    return { me }
-  },
-})(({ me }) => {
+interface GeneralProps {
+  me: NonNullable<TrpcRouterOutput['getMe']['me']>
+}
+
+const General = (props: GeneralProps) => {
+  const { me } = props
+
   const trpcUtils = trpc.useUtils()
 
   const updateProfile = trpc.updateProfile.useMutation()
@@ -34,22 +37,82 @@ export const EditProfilePage = withPageWrapper({
   })
 
   return (
-    <Segment title="Edit Profile">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          formik.handleSubmit()
-        }}
-      >
-        <FormItems>
-          <Input name="nick" label="Nick" formik={formik} />
-          <Input name="name" label="Name" formik={formik} />
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        formik.handleSubmit()
+      }}
+    >
+      <FormItems>
+        <Input name="nick" label="Nick" formik={formik} />
+        <Input name="name" label="Name" formik={formik} />
 
-          <Alert {...alertProps} />
+        <Alert {...alertProps} />
 
-          <Button {...buttonProps}>Update Profile</Button>
-        </FormItems>
-      </form>
-    </Segment>
+        <Button {...buttonProps}>Update Profile</Button>
+      </FormItems>
+    </form>
+  )
+}
+
+const Password = () => {
+  const updatePassword = trpc.updatePassword.useMutation()
+  const { formik, alertProps, buttonProps } = useForm({
+    initialValues: {
+      oldPassword: '',
+      newPassword: '',
+      newPasswordAgain: '',
+    },
+    validationSchema: zUpdatePasswordTrpcInput
+      .extend({
+        newPasswordAgain: z.string().min(1),
+      })
+      .superRefine((value, ctx) => {
+        if (value.newPassword !== value.newPasswordAgain) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Passwords do not match',
+            path: ['newPasswordAgain'],
+          })
+        }
+      }),
+    onFormSubmit: async ({ newPassword, oldPassword }) => {
+      await updatePassword.mutateAsync({ newPassword, oldPassword })
+    },
+    successMessage: 'Password updated',
+  })
+
+  return (
+    <form onSubmit={formik.handleSubmit}>
+      <FormItems>
+        <Input label="Old password" name="oldPassword" type="password" formik={formik} />
+        <Input label="New password" name="newPassword" type="password" formik={formik} />
+        <Input label="New password again" name="newPasswordAgain" type="password" formik={formik} />
+        <Alert {...alertProps} />
+        <Button {...buttonProps}>Update Password</Button>
+      </FormItems>
+    </form>
+  )
+}
+
+export const EditProfilePage = withPageWrapper({
+  authorizedOnly: true,
+  setProps: ({ getAuthorizedMe }) => {
+    const me = getAuthorizedMe()
+    return { me }
+  },
+})(({ me }) => {
+  return (
+    <>
+      <Segment title="Edit Profile">
+        <Segment title="General" size={2}>
+          <General me={me} />
+        </Segment>
+
+        <Segment title="Password" size={2}>
+          <Password />
+        </Segment>
+      </Segment>
+    </>
   )
 })
