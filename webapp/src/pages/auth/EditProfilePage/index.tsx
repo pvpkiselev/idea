@@ -103,6 +103,7 @@ export const EditProfilePage = withPageWrapper({
     const me = getAuthorizedMe()
     return { me }
   },
+  title: 'Edit Profile',
 })(({ me }) => {
   return (
     <>
