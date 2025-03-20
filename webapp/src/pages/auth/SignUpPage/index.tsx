@@ -21,6 +21,7 @@ export const SignUpPage = withPageWrapper({
   const { formik, buttonProps, alertProps } = useForm({
     initialValues: {
       nick: '',
+      email: '',
       password: '',
       passwordAgain: '',
     },
@@ -51,6 +52,7 @@ export const SignUpPage = withPageWrapper({
       <form onSubmit={formik.handleSubmit}>
         <FormItems>
           <Input name="nick" label="Nick" formik={formik} />
+          <Input name="email" label="Email" formik={formik} type="email" />
           <Input name="password" label="Password" formik={formik} type="password" />
           <Input name="passwordAgain" label="Password Again" formik={formik} type="password" />
 
