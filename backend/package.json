@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@ideanick/webapp": "workspace:*",
+    "@ideanick/shared": "workspace:*",
     "@prisma/client": "^6.5.0",
     "@trpc/server": "^10.45.2",
     "axios": "^1.8.4",

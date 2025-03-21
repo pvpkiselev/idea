@@ -1,0 +1,4 @@
+{
+  "eslint.workingDirectories": ["backend", "webapp", "shared"],
+  "eslint.useFlatConfig": false
+}

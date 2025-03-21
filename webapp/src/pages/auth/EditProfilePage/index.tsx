@@ -1,6 +1,6 @@
 import { zUpdatePasswordTrpcInput } from '@ideanick/backend/src/router/auth/updatePassword/input'
 import { zUpdateProfileTrpcInput } from '@ideanick/backend/src/router/auth/updateProfile/input'
-import { z } from 'zod'
+import { zPasswordsMustBeTheSame, zStringRequired } from '@ideanick/shared/src/zod'
 import { Alert } from '../../../components/Alert'
 import { Button } from '../../../components/Button'
 import { FormItems } from '../../../components/FormItems'
@@ -65,17 +65,9 @@ const Password = () => {
     },
     validationSchema: zUpdatePasswordTrpcInput
       .extend({
-        newPasswordAgain: z.string().min(1),
+        newPasswordAgain: zStringRequired,
       })
-      .superRefine((value, ctx) => {
-        if (value.newPassword !== value.newPasswordAgain) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Passwords do not match',
-            path: ['newPasswordAgain'],
-          })
-        }
-      }),
+      .superRefine(zPasswordsMustBeTheSame('newPassword', 'newPasswordAgain')),
     onFormSubmit: async ({ newPassword, oldPassword }) => {
       await updatePassword.mutateAsync({ newPassword, oldPassword })
     },
