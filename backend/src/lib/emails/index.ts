@@ -48,12 +48,19 @@ const sendEmail = async ({
 
     const html = await getEmailHtml(templateName, fullTemplateVariables)
 
+    // only uncomment when email service is ready
+    // const {loggableResponse} = await sendEmailThroughEmailService({
+    //   to,
+    //   subject,
+    //   html,
+    // })
+
     console.info('sendEmail', {
       to,
-      subject,
+      subject, // delete when email service is ready
       templateName,
       fullTemplateVariables,
-      html,
+      html, // delete when email service is ready
     })
 
     return { ok: true }
