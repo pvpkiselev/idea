@@ -1,6 +1,5 @@
 import { canBlockIdeas, canEditIdea } from '@ideanick/backend/src/utils/can'
 import { format } from 'date-fns'
-import { useParams } from 'react-router'
 import { Alert } from '../../../components/Alert'
 import { Button, LinkButton } from '../../../components/Button'
 import { FormItems } from '../../../components/FormItems'
@@ -8,7 +7,7 @@ import { Icon } from '../../../components/Icon'
 import { Segment } from '../../../components/Segment'
 import { useForm } from '../../../lib/form'
 import { withPageWrapper } from '../../../lib/pageWrapper'
-import { type EditIdeaRouteParams, getEditIdeaRoute } from '../../../lib/routes'
+import { getEditIdeaRoute, getViewIdeaRoute } from '../../../lib/routes'
 import { trpc } from '../../../lib/trpc'
 import { type TrpcRouterOutputMaybeIdea } from '../../../models/types'
 import styles from './index.module.scss'
@@ -89,7 +88,7 @@ const BlockIdea = (props: BlockIdeaProps) => {
 export const ViewIdeaPage = withPageWrapper({
   authorizedOnly: true,
   useQuery: () => {
-    const { ideaNick } = useParams() as EditIdeaRouteParams
+    const { ideaNick } = getViewIdeaRoute.useParams()
     return trpc.getIdea.useQuery({ ideaNick })
   },
   setProps: ({ queryResult, ctx, checkExists }) => {
